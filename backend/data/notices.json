@@ -1,0 +1,34 @@
+[
+  {
+    "id": 1,
+    "title": "Karnataka SSP Post-Matric e-Attestation Drive",
+    "tag": "Scholarship",
+    "date": "Today, 09:00 AM",
+    "desc": "All students applying for SSP Karnataka 2026 are required to get their college fee receipts and previous year marksheets e-Attested at the college administrative block desk 4.",
+    "isPinned": true
+  },
+  {
+    "id": 2,
+    "title": "Semester End Exam Registration Schedule Released",
+    "tag": "Academic",
+    "date": "Yesterday",
+    "desc": "Exam registration portal for B.Tech, M.Tech, and Diploma even semesters is now live. Last date without late fee is 15th of next month.",
+    "isPinned": true
+  },
+  {
+    "id": 3,
+    "title": "AICTE Pragati & Saksham Scholarship Verification",
+    "tag": "Scholarship",
+    "date": "2 days ago",
+    "desc": "Institute-level verification for girl students and specially-abled students who applied on the National Scholarship Portal (NSP) will conclude this Friday.",
+    "isPinned": false
+  },
+  {
+    "id": 4,
+    "title": "Smart India Hackathon 2026 Internal Campus Nominations",
+    "tag": "Events",
+    "date": "3 days ago",
+    "desc": "Teams wishing to participate in SIH 2026 can submit their project abstracts via SevaSathi Opportunities radar.",
+    "isPinned": false
+  }
+]

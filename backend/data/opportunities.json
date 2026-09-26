@@ -1,0 +1,46 @@
+[
+  {
+    "id": "opp-1",
+    "title": "Smart India Hackathon (SIH) 2026",
+    "organization": "Ministry of Education & AICTE",
+    "type": "Hackathon",
+    "stipend": "₹1,00,000 Grand Prize",
+    "deadline": "25 Oct 2026",
+    "tags": ["National", "Hardware/Software", "College Teams"],
+    "desc": "World's biggest open innovation model challenging students to solve real problems of ministries, departments, and industries.",
+    "link": "https://www.sih.gov.in/"
+  },
+  {
+    "id": "opp-2",
+    "title": "Google Summer of Code (GSoC) 2026",
+    "organization": "Google Open Source",
+    "type": "Internship",
+    "stipend": "$1,500 – $3,000 USD Stipend",
+    "deadline": "04 Nov 2026",
+    "tags": ["Remote", "Open Source", "Global"],
+    "desc": "Global online program focusing on bringing new contributors into open source software development organizations.",
+    "link": "https://summerofcode.withgoogle.com/"
+  },
+  {
+    "id": "opp-3",
+    "title": "DRDO Student Research Apprenticeship",
+    "organization": "Defence Research & Development Organisation",
+    "type": "Fellowship",
+    "stipend": "₹12,000 / month",
+    "deadline": "18 Nov 2026",
+    "tags": ["Government", "R&D", "Electronics/CS/Mech"],
+    "desc": "Hands-on engineering research apprenticeship in DRDO defense laboratories across India.",
+    "link": "https://www.drdo.gov.in/"
+  },
+  {
+    "id": "opp-4",
+    "title": "Tata Technologies InnoVent Challenge",
+    "organization": "Tata Technologies",
+    "type": "Hackathon",
+    "stipend": "₹3,00,000 + PPO Opportunity",
+    "deadline": "12 Dec 2026",
+    "tags": ["EV", "AI", "Pre-Placement Offer"],
+    "desc": "Competition for 3rd and 4th year engineering students to innovate next-generation electric vehicles and AI mobility solutions.",
+    "link": "https://www.tatatechnologies.com/"
+  }
+]

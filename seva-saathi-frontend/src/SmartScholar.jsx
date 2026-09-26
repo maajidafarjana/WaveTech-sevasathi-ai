@@ -21,6 +21,7 @@ import {
 import VoiceRecorderVisualizer from "./components/VoiceRecorderVisualizer";
 import ScholarshipModal from "./components/ScholarshipModal";
 import { SCHOLARSHIPS_DATA, matchStudentScholarships } from "./data/scholarshipsData";
+import { apiUrl } from "./config/api";
 import "./SmartScholar.css";
 
 const languages = [
@@ -297,7 +298,7 @@ export default function SmartScholar({ studentProfile, onUpdateProfile, initialP
 
     try {
       // 1. First attempt to call the live backend
-      const response = await fetch("http://localhost:5000/api/scholarships/chat", {
+      const response = await fetch(apiUrl("/api/scholarships/chat"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -309,9 +310,8 @@ export default function SmartScholar({ studentProfile, onUpdateProfile, initialP
 
       if (response.ok) {
         const data = await response.json();
-        botReplyText = data.reply;
+        botReplyText = data.reply || "";
         if (data.scholarships && data.scholarships.length > 0) {
-          // Merge rich details from client database
           matchingScholarships = data.scholarships.map((s) => {
             const fullMatch = SCHOLARSHIPS_DATA.find((item) => item.name === s.name || item.id === s.id);
             return fullMatch ? { ...fullMatch, ...s } : s;
@@ -322,14 +322,15 @@ export default function SmartScholar({ studentProfile, onUpdateProfile, initialP
       console.log("Backend offline or unreachable, using local matching engine:", backendError);
     }
 
-    // 2. Client-side Intelligent Fallback if backend returned empty or was unreachable
     if (!matchingScholarships || matchingScholarships.length === 0) {
       const computedMatches = matchStudentScholarships(updatedProfile);
       matchingScholarships = computedMatches.filter((s) => s.isEligible).slice(0, 4);
       if (matchingScholarships.length === 0) {
         matchingScholarships = computedMatches.slice(0, 3);
       }
+    }
 
+    if (!botReplyText) {
       const studentDisplayName = updatedProfile.name || "Student";
       const incomeFormatted = updatedProfile.income ? `₹${Number(updatedProfile.income).toLocaleString('en-IN')}` : "your income bracket";
 

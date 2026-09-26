@@ -1,0 +1,12 @@
+[
+  {
+    "id": "SOS-0001",
+    "createdAt": "2026-09-26T20:07:59.274201",
+    "name": "Ananya",
+    "studentId": "SS-1",
+    "course": "B.Tech",
+    "college": null,
+    "message": "Campus SOS triggered",
+    "status": "broadcasted"
+  }
+]

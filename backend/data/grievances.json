@@ -1,0 +1,49 @@
+{
+  "tickets": [
+    {
+      "ticketId": "SS-C9B08B",
+      "problemTitle": "Test wifi issue",
+      "category": "Wi-Fi & Internet",
+      "urgency": "Medium",
+      "location": "Lab",
+      "description": "Router is down in lab 2",
+      "anonymous": true,
+      "studentId": null,
+      "status": "Submitted",
+      "assignedTo": "Campus Maintenance Team",
+      "upvotes": 0,
+      "createdAt": "2026-09-26T20:07:59.235987",
+      "updatedAt": "2026-09-26T20:07:59.235987"
+    },
+    {
+      "ticketId": "SS-756FE3",
+      "problemTitle": "Mess food quality issue - uncooked rice",
+      "category": "Hostel & Mess Food",
+      "urgency": "Normal",
+      "location": "Main Campus Mess - South Block",
+      "description": "Rice served yesterday and today was undercooked. Request to upgrade kitchen staff training.",
+      "anonymous": true,
+      "studentId": null,
+      "status": "Submitted",
+      "assignedTo": "Hostel Management Committee",
+      "upvotes": 0,
+      "createdAt": "2026-09-26T19:45:36.489050",
+      "updatedAt": "2026-09-26T19:45:36.489050"
+    },
+    {
+      "ticketId": "SS-086921",
+      "problemTitle": "Wi-Fi router not working in Hostel A Block 3rd floor",
+      "category": "Wi-Fi & Internet",
+      "urgency": "Medium",
+      "location": "Hostel A, 3rd Floor Corridor",
+      "description": "Router lights are off, no SSID broadcast since last night. Affecting 3 rooms.",
+      "anonymous": false,
+      "studentId": "SS-2026-KA-1122",
+      "status": "In Progress",
+      "assignedTo": "IT Support Team",
+      "upvotes": 0,
+      "createdAt": "2026-09-26T19:45:36.485490",
+      "updatedAt": "2026-09-26T19:45:36.485490"
+    }
+  ]
+}

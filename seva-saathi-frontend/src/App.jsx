@@ -36,7 +36,8 @@ import {
 
 import SmartScholar from "./SmartScholar";
 import ScholarshipModal from "./components/ScholarshipModal";
-import { SCHOLARSHIPS_DATA, matchStudentScholarships } from "./data/scholarshipsData";
+import { matchStudentScholarships } from "./data/scholarshipsData";
+import { apiUrl } from "./config/api";
 import "./App.css";
 
 function App() {
@@ -98,9 +99,36 @@ function App() {
 
   const unreadCount = notifications.filter(n => n.unread).length;
 
-  // Real-time matched scholarships for the student profile
-  const matchedScholarships = useMemo(() => {
-    return matchStudentScholarships(studentProfile);
+  // Matched scholarships from FastAPI, with local engine as fallback
+  const [matchedScholarships, setMatchedScholarships] = useState(() =>
+    matchStudentScholarships(studentProfile)
+  );
+
+  useEffect(() => {
+    let cancelled = false;
+    const timer = setTimeout(async () => {
+      try {
+        const res = await fetch(apiUrl("/api/scholarships/match"), {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ studentProfile }),
+        });
+        const data = await res.json();
+        if (!cancelled && data.success && Array.isArray(data.scholarships)) {
+          setMatchedScholarships(data.scholarships);
+          return;
+        }
+      } catch (err) {
+        console.log("Scholarship match API unavailable, using local engine:", err);
+      }
+      if (!cancelled) {
+        setMatchedScholarships(matchStudentScholarships(studentProfile));
+      }
+    }, 250);
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
   }, [studentProfile]);
 
   const eligibleScholarships = useMemo(() => {
@@ -717,6 +745,17 @@ function Emergency({ studentProfile }) {
         setSosCounting(false);
         setSosTriggered(true);
         triggerSirenAudio();
+        fetch(apiUrl("/api/sos"), {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: studentProfile.name,
+            studentId: studentProfile.studentId,
+            course: studentProfile.course,
+            college: studentProfile.college,
+            message: "Campus SOS triggered from Emergency hub",
+          }),
+        }).catch((err) => console.log("SOS API unavailable:", err));
       }
     }, 1000);
   };
@@ -898,7 +937,7 @@ function ReportProblem({ studentProfile }) {
 
   // Fetch tickets from MongoDB SevaSaathi collection
   const fetchGrievances = () => {
-    fetch("http://localhost:5000/api/grievances")
+    fetch(apiUrl("/api/grievances"))
       .then((res) => res.json())
       .then((data) => {
         if (data.success && data.tickets) {
@@ -954,7 +993,7 @@ function ReportProblem({ studentProfile }) {
     };
 
     try {
-      const res = await fetch("http://localhost:5000/api/grievances", {
+      const res = await fetch(apiUrl("/api/grievances"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -1004,7 +1043,7 @@ function ReportProblem({ studentProfile }) {
 
   const handleUpvote = async (id) => {
     try {
-      await fetch(`http://localhost:5000/api/grievances/${id}/upvote`, {
+      await fetch(apiUrl(`/api/grievances/${id}/upvote`), {
         method: "PATCH",
       });
     } catch (err) {
@@ -1150,7 +1189,7 @@ function Notices({ onNavigate }) {
   const [selectedTag, setSelectedTag] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
 
-  const noticesList = [
+  const fallbackNotices = [
     {
       id: 1,
       title: "Karnataka SSP Post-Matric e-Attestation Drive",
@@ -1184,6 +1223,19 @@ function Notices({ onNavigate }) {
       isPinned: false
     }
   ];
+
+  const [noticesList, setNoticesList] = useState(fallbackNotices);
+
+  useEffect(() => {
+    fetch(apiUrl("/api/notices"))
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success && Array.isArray(data.notices) && data.notices.length) {
+          setNoticesList(data.notices);
+        }
+      })
+      .catch((err) => console.log("Notices API unavailable:", err));
+  }, []);
 
   const filteredNotices = noticesList.filter((n) => {
     const matchesTag = selectedTag === "All" || n.tag === selectedTag;
@@ -1260,7 +1312,7 @@ function Notices({ onNavigate }) {
 function Opportunities({ onNavigate }) {
   const [filterType, setFilterType] = useState("All");
 
-  const opportunitiesList = [
+  const fallbackOpportunities = [
     {
       id: "opp-1",
       title: "Smart India Hackathon (SIH) 2026",
@@ -1306,6 +1358,19 @@ function Opportunities({ onNavigate }) {
       link: "https://www.tatatechnologies.com/"
     }
   ];
+
+  const [opportunitiesList, setOpportunitiesList] = useState(fallbackOpportunities);
+
+  useEffect(() => {
+    fetch(apiUrl("/api/opportunities"))
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success && Array.isArray(data.opportunities) && data.opportunities.length) {
+          setOpportunitiesList(data.opportunities);
+        }
+      })
+      .catch((err) => console.log("Opportunities API unavailable:", err));
+  }, []);
 
   const filteredOpportunities = opportunitiesList.filter((item) => {
     if (filterType === "All") return true;
