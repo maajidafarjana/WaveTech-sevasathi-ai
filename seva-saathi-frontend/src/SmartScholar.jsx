@@ -20,8 +20,10 @@ import {
 } from "lucide-react";
 import VoiceRecorderVisualizer from "./components/VoiceRecorderVisualizer";
 import ScholarshipModal from "./components/ScholarshipModal";
+import ScholarshipCard from "./components/ScholarshipCard";
 import { SCHOLARSHIPS_DATA, matchStudentScholarships } from "./data/scholarshipsData";
 import { apiUrl } from "./config/api";
+import ReactMarkdown from "react-markdown";
 import "./SmartScholar.css";
 
 const languages = [
@@ -295,9 +297,11 @@ export default function SmartScholar({ studentProfile, onUpdateProfile, initialP
 
     let botReplyText = "";
     let matchingScholarships = [];
+    let detectedIntent = "PROFILE_MATCH";
+    let backendSuccess = false;
 
     try {
-      // 1. First attempt to call the live backend
+      // 1. First attempt to call the live backend with Intent-Router Architecture
       const response = await fetch(apiUrl("/api/scholarships/chat"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -311,43 +315,102 @@ export default function SmartScholar({ studentProfile, onUpdateProfile, initialP
       if (response.ok) {
         const data = await response.json();
         botReplyText = data.reply || "";
+        detectedIntent = data.intent || "PROFILE_MATCH";
+        backendSuccess = true;
+
+        if (data.extractedProfile && onUpdateProfile) {
+          const ep = data.extractedProfile;
+          const merged = {
+            ...updatedProfile,
+            income: ep.familyIncome !== null && ep.familyIncome !== undefined ? ep.familyIncome : updatedProfile.income,
+            course: ep.course || updatedProfile.course,
+            score: ep.percentage !== null && ep.percentage !== undefined ? ep.percentage : updatedProfile.score,
+            gender: ep.gender || updatedProfile.gender,
+            category: ep.category || updatedProfile.category,
+            state: ep.state || updatedProfile.state
+          };
+          onUpdateProfile(merged);
+        }
+
         if (data.scholarships && data.scholarships.length > 0) {
           matchingScholarships = data.scholarships.map((s) => {
             const fullMatch = SCHOLARSHIPS_DATA.find((item) => item.name === s.name || item.id === s.id);
-            return fullMatch ? { ...fullMatch, ...s } : s;
+            return fullMatch
+              ? { ...fullMatch, ...s, officialUrl: s.officialLink || s.officialUrl || fullMatch.officialUrl }
+              : { ...s, officialUrl: s.officialLink || s.officialUrl || s.url };
           });
+        } else {
+          matchingScholarships = [];
         }
       }
     } catch (backendError) {
-      console.log("Backend offline or unreachable, using local matching engine:", backendError);
+      console.log("Backend offline or unreachable, using local intent router fallback:", backendError);
     }
 
-    if (!matchingScholarships || matchingScholarships.length === 0) {
-      const computedMatches = matchStudentScholarships(updatedProfile);
-      matchingScholarships = computedMatches.filter((s) => s.isEligible).slice(0, 4);
-      if (matchingScholarships.length === 0) {
-        matchingScholarships = computedMatches.slice(0, 3);
-      }
-    }
+    // 2. Offline / Local Fallback with Strict Intent Classification
+    if (!backendSuccess) {
+      const lower = userText.toLowerCase();
+      const schemeAliases = [
+        { keys: ["ssp", "post-matric karnataka", "karnataka post matric", "ssp karnataka", "karnataka scholarship"], id: "ssp-karnataka" },
+        { keys: ["pragati", "aicte pragati", "girls engineering"], id: "aicte-pragati" },
+        { keys: ["saksham", "aicte saksham", "specially-abled"], id: "aicte-saksham" },
+        { keys: ["reliance", "dhirubhai"], id: "reliance-foundation-ug" },
+        { keys: ["central sector", "pm-usp", "csss", "nsp"], id: "nsp-central-sector" },
+        { keys: ["badhte kadam", "hdfc"], id: "hdfc-badhte-kadam" },
+        { keys: ["tata trusts", "tata"], id: "tata-trusts-scholarship" },
+        { keys: ["ongc"], id: "ongc-scholarship" },
+        { keys: ["vidyasaarathi", "snl"], id: "vidyasaarathi-snl" },
+        { keys: ["minority", "minorities"], id: "post-matric-minorities" },
+        { keys: ["jindal", "sitaram"], id: "sitaram-jindal" },
+        { keys: ["kvpy", "inspire"], id: "kvpy-inspire" },
+        { keys: ["faea"], id: "faea-scholarship" },
+        { keys: ["loreal", "l'oreal"], id: "loreal-for-women" },
+      ];
 
-    if (!botReplyText) {
-      const studentDisplayName = updatedProfile.name || "Student";
-      const incomeFormatted = updatedProfile.income ? `₹${Number(updatedProfile.income).toLocaleString('en-IN')}` : "your income bracket";
+      const inquiryTokens = ["document", "documents", "required", "checklist", "how to apply", "eligib", "deadline", "last date", "portal", "link", "guideline", "steps"];
+      const matchedAlias = schemeAliases.find((sa) => sa.keys.some((k) => lower.includes(k)));
+      const hasInquiry = inquiryTokens.some((tok) => lower.includes(tok));
 
-      if (userText.toLowerCase().includes("document") || userText.toLowerCase().includes("ssp")) {
-        botReplyText = `Here are the essential documents required for ${updatedProfile.state || "Indian"} scholarships: 1) Aadhaar seeded with Bank Account, 2) Income Certificate (RD Number in Karnataka), 3) Caste/Category Certificate, 4) Current Year College Fee Receipt, and 5) Previous Marksheets. Here are the scholarships matching your profile:`;
-      } else if (matchingScholarships.length > 0) {
-        botReplyText = `Great news, ${studentDisplayName}! 🎉 Based on family income ${incomeFormatted} and course (${updatedProfile.course || "Technical/Degree"}), you qualify for ${matchingScholarships.length} verified scholarships! Tap any scholarship below to see step-by-step application instructions and required documents:`;
+      if (matchedAlias || (hasInquiry && !lower.includes("my profile") && !lower.includes("find scholarships") && !lower.includes("show scholarships"))) {
+        detectedIntent = "SPECIFIC_QUERY";
+        let targetScheme = matchedAlias
+          ? SCHOLARSHIPS_DATA.find((s) => s.id === matchedAlias.id)
+          : SCHOLARSHIPS_DATA.find((s) => s.id === "ssp-karnataka");
+
+        if (targetScheme) {
+          matchingScholarships = [targetScheme];
+          const docsFormatted = (targetScheme.documents || []).map((d) => `- ✅ **${d}**`).join("\n");
+          const stepsFormatted = (targetScheme.applicationSteps || []).map((st, i) => `${i + 1}. ${st}`).join("\n");
+          botReplyText = `### 🏛️ ${targetScheme.name}\n` +
+            `**Authority / Provider:** ${targetScheme.organization || targetScheme.provider || "Official Authority"}\n` +
+            `💰 **Scholarship Grant:** ${targetScheme.amount} | 🗓️ **Application Deadline:** ${targetScheme.deadline}\n\n` +
+            `${targetScheme.description}\n\n` +
+            `📋 **Required Documents Checklist:**\n${docsFormatted}\n\n` +
+            `📝 **Step-by-Step Application Guide:**\n${stepsFormatted}\n\n` +
+            `🔗 **Official Portal:** [Apply on Official Portal](${targetScheme.officialUrl || targetScheme.officialLink})`;
+        } else {
+          botReplyText = `I couldn't find a verified scholarship scheme specifically matching your query in our offline database. Please ask about SSP Karnataka, AICTE Pragati, Reliance Foundation, or NSP Central Sector!`;
+          matchingScholarships = [];
+        }
       } else {
-        botReplyText = `I have analyzed our database of Indian scholarships. Here are the top scholarships that fit students in ${updatedProfile.state || "India"}:`;
+        detectedIntent = "PROFILE_MATCH";
+        const computedMatches = matchStudentScholarships(updatedProfile);
+        matchingScholarships = computedMatches.filter((s) => s.isEligible).slice(0, 4);
+        if (matchingScholarships.length === 0) {
+          matchingScholarships = computedMatches.slice(0, 3);
+        }
+        const studentDisplayName = updatedProfile.name || "Student";
+        const incomeFormatted = updatedProfile.income ? `₹${Number(updatedProfile.income).toLocaleString('en-IN')}` : "your income bracket";
+        botReplyText = `Hello ${studentDisplayName}! 👋 Based on family income ${incomeFormatted} and course (${updatedProfile.course || "Technical/Degree"}), SevaSathi AI matched **${matchingScholarships.length} verified scholarships** for you! Review key details and apply directly using the cards below:`;
       }
     }
 
-    // Add bot response message
+    // Add bot response message with intent metadata
     const botMsg = {
       id: `bot-${Date.now()}`,
       sender: "bot",
       text: botReplyText,
+      intent: detectedIntent,
       scholarships: matchingScholarships,
       timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
     };
@@ -433,74 +496,51 @@ export default function SmartScholar({ studentProfile, onUpdateProfile, initialP
 
             <div className="chatBubbleWrapper">
               <div className="chatBubble">
-                <div className="bubbleText">{msg.text}</div>
-
-                {/* Inline Scholarship Cards */}
-                {msg.scholarships && msg.scholarships.length > 0 && (
-                  <div className="inlineScholarshipsGrid">
-                    {msg.scholarships.map((scholarship, sIdx) => (
-                      <div
-                        className="inlineScholarshipCard"
-                        key={scholarship.id || scholarship.name || sIdx}
-                        onClick={() => setSelectedScholarship(scholarship)}
+                <div className="bubbleText">
+                  {msg.sender === "bot" ? (
+                    <div className="markdownContent">
+                      <ReactMarkdown
+                        components={{
+                          a: ({ node, ...props }) => (
+                            <a
+                              {...props}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="chatMarkdownLink"
+                            />
+                          ),
+                        }}
                       >
-                        <div className="cardTopMeta">
-                          <span className="cardOrg">
-                            {scholarship.organization || scholarship.provider}
-                          </span>
-                          {scholarship.matchScore && (
-                            <span className="cardMatchScore">
-                              <Sparkles size={12} />
-                              {scholarship.matchScore}% Match
-                            </span>
-                          )}
-                        </div>
+                        {msg.text}
+                      </ReactMarkdown>
+                    </div>
+                  ) : (
+                    msg.text
+                  )}
+                </div>
 
-                        <h4>{scholarship.name}</h4>
-
-                        <div className="cardPillRow">
-                          <div className="cardPill grant">
-                            <DollarSign size={13} />
-                            <strong>{scholarship.amount}</strong>
-                          </div>
-                          <div className="cardPill deadline">
-                            <Calendar size={13} />
-                            <span>{scholarship.deadline}</span>
-                          </div>
-                        </div>
-
-                        {scholarship.qualifyReasons && scholarship.qualifyReasons.length > 0 && (
-                          <div className="cardQualifySnippet">
-                            <CheckCircle2 size={13} className="textSuccess" />
-                            <span>{scholarship.qualifyReasons[0]}</span>
-                          </div>
-                        )}
-
-                        <div className="cardActionRow">
-                          <button
-                            className="viewStepsBtn"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setSelectedScholarship(scholarship);
-                            }}
-                          >
-                            <span>Steps & Documents</span>
-                            <ChevronRight size={14} />
-                          </button>
-
-                          <a
-                            href={scholarship.officialUrl || scholarship.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="directPortalLink"
-                            onClick={(e) => e.stopPropagation()}
-                            title="Open Official Government Portal"
-                          >
-                            <ExternalLink size={14} />
-                          </a>
-                        </div>
+                {/* Modern Scholarship Cards Grid / Spotlight */}
+                {msg.scholarships && msg.scholarships.length > 0 && (
+                  <div className={`scholarshipCardsSection ${msg.intent === "SPECIFIC_QUERY" ? "spotlightSection" : "gridSection"}`}>
+                    {msg.intent === "SPECIFIC_QUERY" && (
+                      <div className="spotlightCardBadge">
+                        <Sparkles size={13} />
+                        <span>Official Scheme Spotlight</span>
                       </div>
-                    ))}
+                    )}
+                    <div className={msg.intent === "SPECIFIC_QUERY" ? "singleScholarshipWrapper" : "scholarshipCardsGrid"}>
+                      {msg.scholarships.map((scholarship, sIdx) => (
+                        <ScholarshipCard
+                          key={scholarship.id || scholarship.name || sIdx}
+                          scholarship={scholarship}
+                          onOpenModal={(sch) => setSelectedScholarship(sch)}
+                          onApply={(sch) => {
+                            const targetUrl = sch.officialLink || sch.officialUrl || sch.url;
+                            if (targetUrl) window.open(targetUrl, "_blank", "noopener,noreferrer");
+                          }}
+                        />
+                      ))}
+                    </div>
                   </div>
                 )}
 

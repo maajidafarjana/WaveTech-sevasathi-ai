@@ -139,49 +139,109 @@ def detect_scholarship_keywords(text, scholarships):
     return [m[1] for m in matches[:3]]
 
 
+def classify_user_intent(user_message):
+    lower = (user_message or "").lower()
+    scheme_keywords = [
+        "ssp", "karnataka", "pragati", "saksham", "aicte", "reliance", "central sector",
+        "csss", "pm-usp", "hdfc", "badhte kadam", "tata", "ongc", "vidyasaarathi", "snl",
+        "minority", "minorities", "jindal", "sitaram", "kvpy", "inspire", "faea", "loreal", "l'oreal", "nsp"
+    ]
+    inquiry_words = [
+        "document", "documents", "required", "checklist", "needed", "eligibility",
+        "eligible", "criteria", "deadline", "last date", "apply", "steps", "procedure",
+        "how to", "tell me about", "what is", "portal", "link", "guideline", "guidelines"
+    ]
+
+    matched_kw = next((kw for kw in scheme_keywords if kw in lower), None)
+    has_inquiry = any(w in lower for w in inquiry_words)
+
+    if matched_kw or (has_inquiry and "my profile" not in lower and "find scholarship" not in lower and "show scholarship" not in lower):
+        return "SPECIFIC_QUERY", matched_kw
+
+    return "PROFILE_MATCH", None
+
+
+def find_specific_scholarship(target_or_message, scholarships):
+    if not target_or_message:
+        return None
+    lower = target_or_message.lower().strip()
+
+    alias_map = [
+        (["ssp", "post-matric karnataka", "karnataka post matric", "ssp karnataka", "karnataka scholarship"], "ssp-karnataka"),
+        (["pragati", "aicte pragati", "girls engineering"], "aicte-pragati"),
+        (["saksham", "aicte saksham", "specially-abled"], "aicte-saksham"),
+        (["reliance", "reliance foundation", "dhirubhai"], "reliance-foundation-ug"),
+        (["central sector", "pm-usp", "csss", "nsp"], "nsp-central-sector"),
+        (["badhte kadam", "hdfc"], "hdfc-badhte-kadam"),
+        (["tata trusts", "tata"], "tata-trusts-scholarship"),
+        (["ongc"], "ongc-scholarship"),
+        (["vidyasaarathi", "snl"], "vidyasaarathi-snl"),
+        (["minority", "minorities"], "post-matric-minorities"),
+        (["jindal", "sitaram"], "sitaram-jindal"),
+        (["kvpy", "inspire"], "kvpy-inspire"),
+        (["faea"], "faea-scholarship"),
+        (["loreal", "l'oreal"], "loreal-for-women"),
+    ]
+
+    for keys, sid in alias_map:
+        if any(k in lower for k in keys):
+            match = next((s for s in scholarships if s["id"] == sid), None)
+            if match:
+                return match
+
+    for s in scholarships:
+        if s["id"].lower() in lower or lower in s["id"].lower():
+            return s
+        if s["name"].lower() in lower or lower in s["name"].lower():
+            return s
+
+    return None
+
+
 def generate_chat_reply(user_message, language_code, student_profile):
     scholarships = load_scholarships()
+    intent, target = classify_user_intent(user_message)
+
+    if intent == "SPECIFIC_QUERY":
+        specific = find_specific_scholarship(target or user_message, scholarships)
+        if specific:
+            docs_list = "\n".join([f"- ✅ **{d}**" for d in specific.get("documents", [])])
+            steps_list = "\n".join([f"{i+1}. {st}" for i, st in enumerate(specific.get("applicationSteps", []))])
+            official_url = specific.get("officialLink") or specific.get("officialUrl") or "#"
+
+            reply = (
+                f"### 🏛️ {specific['name']}\n"
+                f"**Provider:** {specific.get('provider') or specific.get('organization', 'Official Authority')}  \n"
+                f"💰 **Grant Amount:** {specific['amount']} | 🗓️ **Deadline:** {specific['deadline']}\n\n"
+                f"{specific.get('description', '')}\n\n"
+                f"📋 **Required Documents Checklist:**\n"
+                f"{docs_list}\n\n"
+                f"📝 **Step-by-Step Application Guide:**\n"
+                f"{steps_list}\n\n"
+                f"🔗 **Official Portal:** [Apply on Official Portal]({official_url})"
+            )
+            return reply, [specific], "SPECIFIC_QUERY"
+        else:
+            reply = (
+                f"I couldn't find a verified scheme matching '{target or user_message}' in our database. "
+                "You can ask about SSP Karnataka, AICTE Pragati, Reliance Foundation, or NSP Central Sector."
+            )
+            return reply, [], "SPECIFIC_QUERY"
+
+    # PROFILE_MATCH intent
     matches = match_student_scholarships(student_profile)
     eligible = [m for m in matches if m["isEligible"]]
     display_list = eligible[:4] if eligible else matches[:3]
 
-    lower = user_message.lower()
-    name = student_profile.get("name") or "Student"
-    income = student_profile.get("income") or 200000
     course = student_profile.get("course") or "Technical/Degree"
-    state = student_profile.get("state") or "India"
+    income = student_profile.get("income") or 200000
     income_fmt = f"₹{int(income):,}"
 
-    if "document" in lower or "ssp" in lower or "required" in lower:
-        reply = (
-            f"Here are the essential documents required for {state} scholarships: "
-            "1) Aadhaar seeded with Bank Account, 2) Income Certificate (RD Number in Karnataka), "
-            "3) Caste/Category Certificate, 4) Current Year College Fee Receipt, "
-            "5) Previous Marksheets. Below are the scholarships matching your profile:"
-        )
-    elif len(display_list) > 0:
-        reply = (
-            f"Great news, {name}! 🎉 Based on family income {income_fmt} and course ({course}), "
-            f"you qualify for {len(display_list)} verified scholarships! "
-            "Tap any scholarship below to see step-by-step application instructions and required documents:"
-        )
-    else:
-        reply = (
-            f"I have analyzed our database of Indian scholarships. "
-            f"Here are the top scholarships that fit students in {state}:"
-        )
+    reply = (
+        f"Hello! 👋 Based on your profile ({course}, annual income {income_fmt}), "
+        f"SevaSathi AI has discovered **{len(display_list)} verified scholarships** matching your eligibility. "
+        "Review key details and apply directly using the cards below:"
+    )
 
-    keyword = detect_scholarship_keywords(user_message, scholarships)
-    if keyword:
-        keyword_ids = [k["id"] for k in keyword]
-        ordered = []
-        for k in keyword:
-            enriched = next((m for m in matches if m["id"] == k["id"]), k)
-            if enriched not in ordered:
-                ordered.append(enriched)
-        for m in display_list:
-            if m["id"] not in keyword_ids:
-                ordered.append(m)
-        display_list = ordered[:4]
+    return reply, display_list, "PROFILE_MATCH"
 
-    return reply, display_list

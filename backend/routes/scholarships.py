@@ -79,7 +79,7 @@ def match_scholarships(req: MatchRequest):
 def scholarships_chat(req: ChatRequest):
     """Endpoint used by SmartScholar AI chat UI (seva-saathi-frontend)."""
     profile = req.studentProfile.model_dump(exclude_none=True)
-    reply, matched = generate_chat_reply(req.message, req.language, profile)
+    reply, matched, intent = generate_chat_reply(req.message, req.language, profile)
 
     general_service_tokens = [
         "senior", "pension", "elderly", "income certificate",
@@ -101,11 +101,13 @@ def scholarships_chat(req: ChatRequest):
 
     return {
         "success": True,
+        "intent": intent,
         "reply": reply,
         "message": req.message,
         "language": req.language or "en-IN",
         "studentProfile": profile,
-        "scholarships": matched
+        "scholarships": matched,
+        "count": len(matched)
     }
 
 

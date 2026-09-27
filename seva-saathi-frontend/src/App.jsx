@@ -31,11 +31,15 @@ import {
   HelpCircle,
   Compass,
   ArrowRight,
-  Send
+  Send,
+  LogOut,
 } from "lucide-react";
 
 import SmartScholar from "./SmartScholar";
 import ScholarshipModal from "./components/ScholarshipModal";
+import AuthPage from "./components/AuthPage";
+import ScholarshipTracker from "./components/ScholarshipTracker";
+import ScholarshipHelpdesk from "./components/ScholarshipHelpdesk";
 import { matchStudentScholarships } from "./data/scholarshipsData";
 import { apiUrl } from "./config/api";
 import "./App.css";
@@ -48,26 +52,54 @@ function App() {
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [chatInitialPrompt, setChatInitialPrompt] = useState("");
 
-  // Global Student Profile State
-  const [studentProfile, setStudentProfile] = useState({
-    name: "Ananya Rao",
-    income: 200000,
-    category: "OBC",
-    gender: "Female",
-    course: "B.Tech",
-    year: "2nd Year",
-    state: "Karnataka",
-    college: "Dayananda Sagar College of Engineering",
-    studentId: "SS-2026-KA-4819",
-    score: 82,
-    documents: {
-      aadhaarSeeded: true,
-      incomeCert: true,
-      casteCert: true,
-      marksheet: true,
-      bonafide: false,
+  // Authenticated Student State (Saved in localStorage)
+  const [currentUser, setCurrentUser] = useState(() => {
+    try {
+      const saved = localStorage.getItem("sevasathi_user");
+      return saved ? JSON.parse(saved) : null;
+    } catch {
+      return null;
     }
   });
+
+  // Global Student Profile State
+  const [studentProfile, setStudentProfile] = useState(() => {
+    try {
+      const saved = localStorage.getItem("sevasathi_user");
+      if (saved) return JSON.parse(saved);
+    } catch {
+      // fallback
+    }
+    return {
+      name: "Ananya Rao",
+      email: "ananya.rao@dsce.edu.in",
+      mobile: "9876543210",
+      income: 200000,
+      category: "OBC",
+      gender: "Female",
+      course: "B.Tech",
+      year: "2nd Year",
+      state: "Karnataka",
+      college: "Dayananda Sagar College of Engineering",
+      studentId: "SS-2026-KA-4819",
+      score: 82,
+      documents: {
+        aadhaarSeeded: true,
+        incomeCert: true,
+        casteCert: true,
+        marksheet: true,
+        bonafide: false,
+      },
+    };
+  });
+
+  // Logout Handler
+  const handleLogout = () => {
+    localStorage.removeItem("sevasathi_user");
+    localStorage.removeItem("sevasathi_token");
+    setCurrentUser(null);
+    setActivePage("Dashboard");
+  };
 
   // Notifications State
   const [notifications, setNotifications] = useState([
@@ -77,7 +109,7 @@ function App() {
       desc: "Post-Matric portal application closes in 65 days. Verify your e-Attestation.",
       time: "2h ago",
       unread: true,
-      page: "SmartScholar"
+      page: "Track Application",
     },
     {
       id: 2,
@@ -85,19 +117,19 @@ function App() {
       desc: "Fresh registrations open for technical girl students. ₹50,000/year grant.",
       time: "5h ago",
       unread: true,
-      page: "SmartScholar"
+      page: "SmartScholar",
     },
     {
       id: 3,
-      title: "Campus Wi-Fi Maintenance Update",
-      desc: "Block B hostel Wi-Fi routers upgraded to Wi-Fi 6.",
+      title: "Scholarship Grievance Nodal Update",
+      desc: "Your ticket #SS-7192 has been picked up by District Officer.",
       time: "1d ago",
       unread: false,
-      page: "Report Problem"
-    }
+      page: "Scholarship Helpdesk",
+    },
   ]);
 
-  const unreadCount = notifications.filter(n => n.unread).length;
+  const unreadCount = notifications.filter((n) => n.unread).length;
 
   // Matched scholarships from FastAPI, with local engine as fallback
   const [matchedScholarships, setMatchedScholarships] = useState(() =>
@@ -132,16 +164,16 @@ function App() {
   }, [studentProfile]);
 
   const eligibleScholarships = useMemo(() => {
-    return matchedScholarships.filter(s => s.isEligible);
+    return matchedScholarships.filter((s) => s.isEligible);
   }, [matchedScholarships]);
 
   const menuItems = [
     { name: "Dashboard", icon: <Home size={20} />, badge: null },
     { name: "SmartScholar", icon: <GraduationCap size={20} />, badge: "AI" },
+    { name: "Track Application", icon: <Clock size={20} />, badge: "5 Stages" },
+    { name: "Scholarship Helpdesk", icon: <HelpCircle size={20} />, badge: "Support" },
     { name: "Opportunities", icon: <Briefcase size={20} />, badge: "4 New" },
     { name: "Notices", icon: <Bell size={20} />, badge: unreadCount > 0 ? `${unreadCount}` : null },
-    { name: "Report Problem", icon: <FileText size={20} />, badge: null },
-    { name: "Emergency", icon: <AlertTriangle size={20} />, badge: "SOS", isEmergency: true },
     { name: "Profile", icon: <User size={20} />, badge: null },
   ];
 
@@ -159,6 +191,22 @@ function App() {
   const markAllNotificationsRead = () => {
     setNotifications(prev => prev.map(n => ({ ...n, unread: false })));
   };
+
+  if (!currentUser) {
+    return (
+      <AuthPage
+        onLoginSuccess={(user) => {
+          setCurrentUser(user);
+          setStudentProfile((prev) => ({
+            ...prev,
+            ...user,
+            documents: user.documents || prev.documents,
+          }));
+          setActivePage("Dashboard");
+        }}
+      />
+    );
+  }
 
   return (
     <div className="app">
@@ -192,15 +240,13 @@ function App() {
           {menuItems.map((item) => (
             <button
               key={item.name}
-              className={`navItem ${activePage === item.name ? "active" : ""} ${
-                item.isEmergency ? "navEmergency" : ""
-              }`}
+              className={`navItem ${activePage === item.name ? "active" : ""}`}
               onClick={() => handlePageChange(item.name)}
             >
               <span className="navIconWrapper">{item.icon}</span>
               <span className="navText">{item.name}</span>
               {item.badge && (
-                <span className={`navBadge ${item.isEmergency ? "badgeEmergency" : ""}`}>
+                <span className="navBadge">
                   {item.badge}
                 </span>
               )}
@@ -208,7 +254,7 @@ function App() {
           ))}
         </nav>
 
-        {/* SIDEBAR PROFILE CARD */}
+        {/* SIDEBAR PROFILE & LOGOUT */}
         <div className="sidebarBottom">
           <div
             className="studentMiniProfile"
@@ -221,6 +267,15 @@ function App() {
               <small>{studentProfile.course} • {studentProfile.state}</small>
             </div>
           </div>
+          <button
+            type="button"
+            className="sidebarLogoutBtn"
+            onClick={handleLogout}
+            title="Log out of SevaSathi"
+          >
+            <LogOut size={15} />
+            <span>Sign Out</span>
+          </button>
         </div>
       </aside>
 
@@ -299,6 +354,17 @@ function App() {
             >
               {studentProfile.name.charAt(0)}
             </div>
+
+            {/* Top Sign Out Button */}
+            <button
+              type="button"
+              className="topLogoutBtn"
+              onClick={handleLogout}
+              title="Sign Out of SevaSathi"
+            >
+              <LogOut size={15} />
+              <span>Sign Out</span>
+            </button>
           </div>
         </header>
 
@@ -324,9 +390,20 @@ function App() {
           </div>
         )}
 
-        {activePage === "Emergency" && <Emergency studentProfile={studentProfile} />}
+        {activePage === "Track Application" && (
+          <div className="page">
+            <ScholarshipTracker onNavigateHelpdesk={handlePageChange} />
+          </div>
+        )}
 
-        {activePage === "Report Problem" && <ReportProblem studentProfile={studentProfile} />}
+        {(activePage === "Scholarship Helpdesk" || activePage === "Report Problem") && (
+          <div className="page">
+            <ScholarshipHelpdesk
+              studentProfile={studentProfile}
+              initialTopic={chatInitialPrompt}
+            />
+          </div>
+        )}
 
         {activePage === "Notices" && <Notices onNavigate={handlePageChange} />}
 
@@ -679,12 +756,17 @@ function Dashboard({
         </div>
       </section>
 
-      {/* QUICK ACTIONS FOR CAMPUS SERVICES */}
+      {/* LIVE SCHOLARSHIP APPLICATION TRACKER SECTION */}
+      <section className="section dashboardTrackerSection">
+        <ScholarshipTracker compact={true} onNavigateHelpdesk={onNavigate} />
+      </section>
+
+      {/* QUICK ACTIONS FOR SCHOLARSHIP SERVICES & HELPDESK */}
       <section className="section">
         <div className="sectionHeader">
           <div>
-            <h2>Campus & Student Services</h2>
-            <p>One-touch access to essential campus resources, safety, and problem reporting.</p>
+            <h2>Scholarship Services & Student Helpdesk</h2>
+            <p>One-touch access to AI matching, live 5-stage tracking, and priority grievance redressal.</p>
           </div>
         </div>
 
@@ -696,18 +778,18 @@ function Dashboard({
             <span className="cardLinkText">Open Assistant →</span>
           </div>
 
-          <div className="quickCard cardEmergency" onClick={() => onNavigate("Emergency")}>
-            <div className="quickIcon">🚨</div>
-            <h3>Campus Emergency SOS</h3>
-            <p>Instant SOS trigger, campus warden contacts, ambulance, and women helplines.</p>
-            <span className="cardLinkText">Emergency Hub →</span>
+          <div className="quickCard cardTracker" onClick={() => onNavigate("Track Application")}>
+            <div className="quickIcon">⏱️</div>
+            <h3>Track Your Scholarship</h3>
+            <p>Visual 5-stage progress from college verification to bank DBT credit.</p>
+            <span className="cardLinkText">Check Status →</span>
           </div>
 
-          <div className="quickCard cardProblem" onClick={() => onNavigate("Report Problem")}>
-            <div className="quickIcon">📝</div>
-            <h3>Report Problem</h3>
-            <p>Report hostel, Wi-Fi, sanitation, or academic issues with live ticket tracking.</p>
-            <span className="cardLinkText">Track Tickets →</span>
+          <div className="quickCard cardHelpdesk" onClick={() => onNavigate("Scholarship Helpdesk")}>
+            <div className="quickIcon">🛡️</div>
+            <h3>Scholarship Helpdesk</h3>
+            <p>Report portal login errors, certificate upload failures, or Aadhaar mismatches.</p>
+            <span className="cardLinkText">Report Issue →</span>
           </div>
 
           <div className="quickCard cardOpportunities" onClick={() => onNavigate("Opportunities")}>
@@ -722,464 +804,8 @@ function Dashboard({
   );
 }
 
-/* =========================================================
-   2. EMERGENCY & CAMPUS SOS PAGE
-========================================================= */
 
-function Emergency({ studentProfile }) {
-  const [sosCounting, setSosCounting] = useState(false);
-  const [countdown, setCountdown] = useState(3);
-  const [sosTriggered, setSosTriggered] = useState(false);
 
-  const startSosCountdown = () => {
-    setSosCounting(true);
-    setCountdown(3);
-    setSosTriggered(false);
-
-    let counter = 3;
-    const interval = setInterval(() => {
-      counter -= 1;
-      setCountdown(counter);
-      if (counter <= 0) {
-        clearInterval(interval);
-        setSosCounting(false);
-        setSosTriggered(true);
-        triggerSirenAudio();
-        fetch(apiUrl("/api/sos"), {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            name: studentProfile.name,
-            studentId: studentProfile.studentId,
-            course: studentProfile.course,
-            college: studentProfile.college,
-            message: "Campus SOS triggered from Emergency hub",
-          }),
-        }).catch((err) => console.log("SOS API unavailable:", err));
-      }
-    }, 1000);
-  };
-
-  const cancelSos = () => {
-    setSosCounting(false);
-    setCountdown(3);
-    setSosTriggered(false);
-  };
-
-  // Safe synthesized web audio beep for emergency simulation
-  const triggerSirenAudio = () => {
-    try {
-      const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-      osc.type = "sawtooth";
-      osc.frequency.setValueAtTime(600, audioCtx.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(1000, audioCtx.currentTime + 0.3);
-      gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 1.2);
-      osc.connect(gain);
-      gain.connect(audioCtx.destination);
-      osc.start();
-      osc.stop(audioCtx.currentTime + 1.2);
-    } catch (e) {
-      console.log("Audio siren error:", e);
-    }
-  };
-
-  const sendWhatsAppSos = () => {
-    const message = encodeURIComponent(
-      `🚨 EMERGENCY SOS from ${studentProfile.name}! Student ID: ${studentProfile.studentId}, Course: ${studentProfile.course}. I need urgent assistance on campus. Please contact me immediately!`
-    );
-    window.open(`https://api.whatsapp.com/send?text=${message}`, "_blank");
-  };
-
-  return (
-    <div className="page emergencyPage">
-      {/* SOS HERO TRIGGER */}
-      <div className="sosHeroCard">
-        <div className="sosHeroContent">
-          <span className="sosBadge">CAMPUS RESCUE & RAPID RESPONSE</span>
-          <h2>Campus Emergency SOS Hub</h2>
-          <p>
-            If you are in immediate danger, feel unsafe, or need medical attention, press the SOS button
-            or use the verified one-touch helplines below.
-          </p>
-
-          <div className="sosActionsRow">
-            {!sosCounting && !sosTriggered && (
-              <button className="bigSosBtn" onClick={startSosCountdown}>
-                <ShieldAlert size={28} />
-                <span>TRIGGER SOS (3 SECONDS)</span>
-              </button>
-            )}
-
-            {sosCounting && (
-              <div className="countdownBox">
-                <span className="countNumber">{countdown}</span>
-                <p>Sending alert to Campus Security in {countdown} seconds...</p>
-                <button className="cancelSosBtn" onClick={cancelSos}>
-                  Cancel SOS
-                </button>
-              </div>
-            )}
-
-            {sosTriggered && (
-              <div className="sosTriggeredNotice">
-                <CheckCircle2 size={24} />
-                <div>
-                  <strong>🚨 SOS Alert Broadcasted!</strong>
-                  <p>Campus Security & Emergency responders have been alerted with your profile.</p>
-                </div>
-                <button className="cancelSosBtn" onClick={cancelSos}>
-                  Reset
-                </button>
-              </div>
-            )}
-
-            <button className="whatsappSosBtn" onClick={sendWhatsAppSos}>
-              <span>Share Location via WhatsApp</span>
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* EMERGENCY HELPLINES DIRECTORY */}
-      <div className="section">
-        <div className="sectionHeader">
-          <div>
-            <h2>24x7 Emergency Hotlines</h2>
-            <p>Verified government and campus emergency telephone numbers.</p>
-          </div>
-        </div>
-
-        <div className="emergencyGrid">
-          <div className="emergencyCard medicalCard">
-            <div className="emIcon">🚑</div>
-            <h3>Ambulance & Medical</h3>
-            <p>National Emergency Medical Services for road or campus health crises.</p>
-            <a href="tel:108" className="emCallBtn red">
-              <PhoneCall size={15} />
-              <span>Call 108</span>
-            </a>
-          </div>
-
-          <div className="emergencyCard policeCard">
-            <div className="emIcon">🚓</div>
-            <h3>Police Helpline</h3>
-            <p>Immediate police assistance and crime reporting across India.</p>
-            <a href="tel:112" className="emCallBtn blue">
-              <PhoneCall size={15} />
-              <span>Call 112</span>
-            </a>
-          </div>
-
-          <div className="emergencyCard womenCard">
-            <div className="emIcon">🛡️</div>
-            <h3>Women Safety Helpline</h3>
-            <p>24x7 dedicated emergency line for women safety and harassment protection.</p>
-            <a href="tel:1091" className="emCallBtn purple">
-              <PhoneCall size={15} />
-              <span>Call 1091</span>
-            </a>
-          </div>
-
-          <div className="emergencyCard raggingCard">
-            <div className="emIcon">🚫</div>
-            <h3>Anti-Ragging Helpline</h3>
-            <p>UGC National Anti-Ragging Toll Free 24x7 hotline.</p>
-            <a href="tel:18001805522" className="emCallBtn orange">
-              <PhoneCall size={15} />
-              <span>Call 1800-180-5522</span>
-            </a>
-          </div>
-
-          <div className="emergencyCard mentalHealthCard">
-            <div className="emIcon">🧠</div>
-            <h3>Tele-MANAS Mental Health</h3>
-            <p>Government mental health counseling and emotional crisis support.</p>
-            <a href="tel:14416" className="emCallBtn green">
-              <PhoneCall size={15} />
-              <span>Call 14416</span>
-            </a>
-          </div>
-
-          <div className="emergencyCard campusGuardCard">
-            <div className="emIcon">🏢</div>
-            <h3>Campus Security Desk</h3>
-            <p>Main gate security and night hostel patrol warden.</p>
-            <a href="tel:08026662222" className="emCallBtn dark">
-              <PhoneCall size={15} />
-              <span>Call Campus Guard</span>
-            </a>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-/* =========================================================
-   3. REPORT A PROBLEM (WITH LIVE TICKET TRACKER)
-========================================================= */
-
-function ReportProblem({ studentProfile }) {
-  const [title, setTitle] = useState("");
-  const [category, setCategory] = useState("Wi-Fi & Internet");
-  const [urgency, setUrgency] = useState("Medium");
-  const [location, setLocation] = useState("");
-  const [description, setDescription] = useState("");
-  const [isAnonymous, setIsAnonymous] = useState(false);
-  const [submittedMessage, setSubmittedMessage] = useState(false);
-
-  // Initial campus tickets & live sync with MongoDB SevaSaathi database
-  const [tickets, setTickets] = useState([]);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  // Fetch tickets from MongoDB SevaSaathi collection
-  const fetchGrievances = () => {
-    fetch(apiUrl("/api/grievances"))
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.success && data.tickets) {
-          const formatted = data.tickets.map((t) => ({
-            id: t.ticketId,
-            title: t.problemTitle,
-            category: t.category,
-            location: t.location,
-            urgency: t.urgency,
-            status: t.status,
-            date: new Date(t.createdAt).toLocaleDateString([], {
-              month: "short",
-              day: "numeric",
-              hour: "2-digit",
-              minute: "2-digit",
-            }),
-            upvotes: t.upvotes || 0,
-            author: t.anonymous
-              ? "Anonymous Student"
-              : (t.studentId ? `Student (${t.studentId})` : "Student"),
-          }));
-          setTickets(formatted);
-        }
-      })
-      .catch((err) => {
-        console.log("Database offline or syncing locally:", err);
-      });
-  };
-
-  useEffect(() => {
-    fetchGrievances();
-  }, []);
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!title.trim() || !description.trim()) {
-      alert("Please fill in problem title and description.");
-      return;
-    }
-
-    setIsSubmitting(true);
-    const payload = {
-      ticketId: `SS-${Math.floor(1000 + Math.random() * 9000)}`,
-      problemTitle: title.trim(),
-      category,
-      urgency,
-      location: location.trim() || "Campus Main Area",
-      description: description.trim(),
-      anonymous: isAnonymous,
-      studentId: isAnonymous ? null : studentProfile.studentId,
-      status: "Submitted",
-      assignedTo: "Campus Maintenance Team",
-    };
-
-    try {
-      const res = await fetch(apiUrl("/api/grievances"), {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-      const data = await res.json();
-      if (data.success && data.ticket) {
-        const saved = data.ticket;
-        const newTicket = {
-          id: saved.ticketId,
-          title: saved.problemTitle,
-          category: saved.category,
-          location: saved.location,
-          urgency: saved.urgency,
-          status: saved.status,
-          date: "Just now",
-          upvotes: saved.upvotes || 0,
-          author: saved.anonymous ? "Anonymous Student" : studentProfile.name,
-        };
-        setTickets([newTicket, ...tickets]);
-      } else {
-        throw new Error(data.error || "Failed to save to database");
-      }
-    } catch (err) {
-      console.log("Saving locally as fallback:", err);
-      const fallbackTicket = {
-        id: payload.ticketId,
-        title: payload.problemTitle,
-        category: payload.category,
-        location: payload.location,
-        urgency: payload.urgency,
-        status: payload.status,
-        date: "Just now",
-        upvotes: 0,
-        author: isAnonymous ? "Anonymous Student" : studentProfile.name,
-      };
-      setTickets([fallbackTicket, ...tickets]);
-    } finally {
-      setIsSubmitting(false);
-    }
-
-    setTitle("");
-    setLocation("");
-    setDescription("");
-    setSubmittedMessage(true);
-    setTimeout(() => setSubmittedMessage(false), 5000);
-  };
-
-  const handleUpvote = async (id) => {
-    try {
-      await fetch(apiUrl(`/api/grievances/${id}/upvote`), {
-        method: "PATCH",
-      });
-    } catch (err) {
-      console.log("Upvote offline:", err);
-    }
-    setTickets((prev) =>
-      prev.map((t) => (t.id === id ? { ...t, upvotes: t.upvotes + 1 } : t))
-    );
-  };
-
-  return (
-    <div className="page reportProblemPage">
-      <div className="problemLayoutGrid">
-        {/* Left: Reporting Form */}
-        <div className="problemFormCard">
-          <div className="formHeader">
-            <span className="cardMiniLabel">STUDENT GRIEVANCE REDRESSAL</span>
-            <h2>Report a Campus Problem</h2>
-            <p>Submit campus infrastructure, mess, or facility issues for immediate resolution.</p>
-          </div>
-
-          {submittedMessage && (
-            <div className="ticketSuccessAlert">
-              <CheckCircle2 size={18} />
-              <span>Ticket submitted successfully! You can track live progress on the right.</span>
-            </div>
-          )}
-
-          <form onSubmit={handleSubmit}>
-            <div className="formGroup">
-              <label>Problem Title *</label>
-              <input
-                type="text"
-                placeholder="e.g. Wi-Fi router dead in room 302, Hostel A"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                required
-              />
-            </div>
-
-            <div className="formRow">
-              <div className="formGroup">
-                <label>Category</label>
-                <select value={category} onChange={(e) => setCategory(e.target.value)}>
-                  <option value="Wi-Fi & Internet">Wi-Fi & Internet</option>
-                  <option value="Hostel & Mess">Hostel & Mess Food</option>
-                  <option value="Classroom & Labs">Classroom & Lab Equipment</option>
-                  <option value="Sanitation & Water">Sanitation & Drinking Water</option>
-                  <option value="Campus Safety">Campus Safety & Lighting</option>
-                  <option value="Scholarship Desk">Scholarship / Fee Desk</option>
-                </select>
-              </div>
-
-              <div className="formGroup">
-                <label>Urgency Level</label>
-                <select value={urgency} onChange={(e) => setUrgency(e.target.value)}>
-                  <option value="Normal">Normal (Within 48 hours)</option>
-                  <option value="Medium">Medium (Within 24 hours)</option>
-                  <option value="Urgent">Urgent (Immediate attention)</option>
-                </select>
-              </div>
-            </div>
-
-            <div className="formGroup">
-              <label>Location / Room / Building</label>
-              <input
-                type="text"
-                placeholder="e.g. Mechanical Block 2nd Floor, Room 204"
-                value={location}
-                onChange={(e) => setLocation(e.target.value)}
-              />
-            </div>
-
-            <div className="formGroup">
-              <label>Detailed Explanation *</label>
-              <textarea
-                rows="4"
-                placeholder="Describe the issue, when it started, and who it affects..."
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                required
-              />
-            </div>
-
-            <div className="formGroup checkboxGroup">
-              <label className="checkboxLabel">
-                <input
-                  type="checkbox"
-                  checked={isAnonymous}
-                  onChange={(e) => setIsAnonymous(e.target.checked)}
-                />
-                <span>Submit anonymously (hides your name from public tickets)</span>
-              </label>
-            </div>
-
-            <button type="submit" className="primaryButton">
-              Submit Grievance Ticket
-            </button>
-          </form>
-        </div>
-
-        {/* Right: Live Ticket Tracker */}
-        <div className="ticketsTrackerCard">
-          <div className="trackerHeader">
-            <h3>Live Campus Ticket Tracker</h3>
-            <span className="badgeCount">{tickets.length} Active</span>
-          </div>
-
-          <div className="ticketsList">
-            {tickets.map((t) => (
-              <div key={t.id} className="ticketCard">
-                <div className="ticketTop">
-                  <span className="ticketId">#{t.id}</span>
-                  <span className={`statusPill status-${t.status.replace(/\s+/g, "").toLowerCase()}`}>
-                    {t.status}
-                  </span>
-                </div>
-
-                <h4>{t.title}</h4>
-                <small className="ticketLocation">📍 {t.location}</small>
-
-                <div className="ticketFooter">
-                  <span className="ticketMeta">{t.category} • {t.date}</span>
-                  <button className="upvoteBtn" onClick={() => handleUpvote(t.id)}>
-                    <ThumbsUp size={13} />
-                    <span>{t.upvotes}</span>
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
 
 /* =========================================================
    4. NOTICES & CIRCULARS PAGE

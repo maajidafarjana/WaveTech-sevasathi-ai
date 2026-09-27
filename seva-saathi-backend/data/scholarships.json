@@ -1,0 +1,526 @@
+[
+  {
+    "id": "ssp-karnataka",
+    "name": "SSP Karnataka Post-Matric Scholarship",
+    "amount": "₹25,000 – ₹60,000 / year",
+    "deadline": "30 Nov 2026",
+    "officialLink": "https://ssp.postmatric.karnataka.gov.in/",
+    "eligibility": {
+      "minPercentage": 50,
+      "course": ["B.Tech", "BE", "Diploma", "B.Sc", "B.Com", "B.A", "MBBS", "BCA", "BBA", "PUC"],
+      "maxFamilyIncome": 250000,
+      "category": ["SC", "ST", "OBC", "Minority", "EWS", "General"],
+      "gender": "All",
+      "state": ["Karnataka"]
+    },
+    "provider": "Government of Karnataka (Social Welfare Dept)",
+    "description": "Comprehensive state fee concession, tuition waiver, and maintenance allowance for students having Karnataka domicile.",
+    "documents": [
+      "Aadhaar Number (seeded with bank account)",
+      "Caste & Income Certificate RD Number (Nadakacheri)",
+      "College Registration Number & Fee Receipt",
+      "SSLC / 10th & PUC / 12th Marks Card",
+      "e-Attestation of study documents"
+    ],
+    "applicationSteps": [
+      "Create an account on the Karnataka SSP Post-Matric portal with your Aadhaar.",
+      "Get your study, fee, and previous marksheets e-Attested by your college e-Attestation officer.",
+      "Enter your Caste/Income Certificate RD numbers from Nadakacheri.",
+      "Submit the application and download the acknowledgement receipt to submit to your college scholarship desk."
+    ]
+  },
+  {
+    "id": "aicte-pragati",
+    "name": "AICTE Pragati Scholarship for Girl Students",
+    "amount": "₹50,000 / year",
+    "deadline": "15 Dec 2026",
+    "officialLink": "https://scholarships.gov.in/",
+    "eligibility": {
+      "minPercentage": 60,
+      "course": ["B.Tech", "BE", "B.Arch", "B.Pharm", "Diploma"],
+      "maxFamilyIncome": 800000,
+      "category": ["General", "OBC", "SC", "ST", "EWS", "Minority"],
+      "gender": "Female",
+      "state": ["All India"]
+    },
+    "provider": "All India Council for Technical Education (AICTE)",
+    "description": "Financial assistance of ₹50,000 per annum towards college fee, books, and laptops for meritorious female students admitted into technical degree/diploma programs.",
+    "documents": [
+      "Mark sheet of Class 10th & 12th / ITI",
+      "Annual Family Income Certificate issued by Tahsildar (< 8 LPA)",
+      "Admission Letter from AICTE approved institute",
+      "Tuition Fee Receipt paid to the college",
+      "Bank passbook copy with IFSC and Aadhaar seeding declaration"
+    ],
+    "applicationSteps": [
+      "Register on National Scholarship Portal (NSP) with One-Time Registration (OTR).",
+      "Select 'AICTE Pragati Scheme for Girls (Degree/Diploma)'.",
+      "Upload verified parent income certificate and fee receipts.",
+      "Application is verified at Institute Level (INM) followed by State Nodal Officer."
+    ]
+  },
+  {
+    "id": "reliance-foundation-ug",
+    "name": "Reliance Foundation Undergraduate Scholarship",
+    "amount": "Up to ₹2,00,000 over course duration",
+    "deadline": "10 Oct 2026",
+    "officialLink": "https://www.scholarships.reliancefoundation.org/",
+    "eligibility": {
+      "minPercentage": 60,
+      "course": ["B.Tech", "BE", "B.Sc", "B.Com", "B.A", "MBBS", "B.Pharm", "BCA", "BBA", "Diploma"],
+      "maxFamilyIncome": 1500000,
+      "category": ["General", "OBC", "SC", "ST", "EWS", "Minority"],
+      "gender": "All",
+      "state": ["All India"]
+    },
+    "provider": "Reliance Foundation",
+    "description": "Prestigious merit-cum-means scholarship with leadership development for first-year degree students across India (income preference < 2.5 LPA).",
+    "documents": [
+      "12th Standard Board Examination Mark sheet",
+      "Family Income Proof (ITR / Salary slip / Tehsildar certificate)",
+      "Proof of admission in full-time undergraduate program",
+      "Government Identity Proof (Aadhaar / Voter ID)",
+      "Passport size photograph"
+    ],
+    "applicationSteps": [
+      "Complete initial eligibility questionnaire on Reliance Foundation portal.",
+      "Submit personal details, academic scores, and write a statement of purpose.",
+      "Appear for the online aptitude test (60 minutes, logical & numerical reasoning).",
+      "Shortlisted candidates receive scholarship disbursement in phased tranches."
+    ]
+  },
+  {
+    "id": "nsp-central-sector",
+    "name": "PM-USP Central Sector Scheme of Scholarship (CSSS)",
+    "amount": "₹12,000 – ₹20,000 / year",
+    "deadline": "31 Dec 2026",
+    "officialLink": "https://scholarships.gov.in/",
+    "eligibility": {
+      "minPercentage": 80,
+      "course": ["B.Tech", "BE", "B.Sc", "B.Com", "B.A", "MBBS", "BCA", "BBA"],
+      "maxFamilyIncome": 450000,
+      "category": ["General", "OBC", "SC", "ST", "EWS"],
+      "gender": "All",
+      "state": ["All India"]
+    },
+    "provider": "Department of Higher Education (Govt of India)",
+    "description": "Awarded to meritorious students who scored above 80th percentile in Class 12 board examinations pursuing regular degree courses.",
+    "documents": [
+      "Class 12 Marks Sheet (Top 20th percentile)",
+      "Income Certificate from competent revenue authority (< 4.5 LPA)",
+      "College Bonafide and Enrollment Certificate",
+      "Bank Account seeded with Aadhaar"
+    ],
+    "applicationSteps": [
+      "Generate NSP One-Time Registration (OTR).",
+      "Apply under 'Department of Higher Education - CSSS'.",
+      "Submit college roll number and upload board certificate.",
+      "Verification completed by College Nodal Officer via NSP portal."
+    ]
+  },
+  {
+    "id": "kotak-kanya",
+    "name": "Kotak Kanya Scholarship for Girls",
+    "amount": "₹1,50,000 / year",
+    "deadline": "30 Oct 2026",
+    "officialLink": "https://kotakeducation.org/kotak-kanya-scholarship/",
+    "eligibility": {
+      "minPercentage": 75,
+      "course": ["B.Tech", "BE", "MBBS", "B.Arch", "Integrated LLB", "B.Design"],
+      "maxFamilyIncome": 600000,
+      "category": ["General", "OBC", "SC", "ST", "EWS"],
+      "gender": "Female",
+      "state": ["All India"]
+    },
+    "provider": "Kotak Education Foundation",
+    "description": "Substantial financial grant of ₹1.5 Lakh per year for meritorious girl students pursuing professional graduation in NAAC/NIRF accredited colleges.",
+    "documents": [
+      "12th marks sheet (minimum 75% aggregate)",
+      "Proof of admission in accredited college (Rank card / Fee receipt)",
+      "Income Certificate / ITR (< 6 LPA)",
+      "Aadhaar card & Bank account passbook"
+    ],
+    "applicationSteps": [
+      "Apply through Buddy4Study / Kotak Education portal.",
+      "Upload admission letters, fee receipts, and marks cards.",
+      "Participate in telephonic interview round.",
+      "Final selection based on financial need and academic excellence."
+    ]
+  },
+  {
+    "id": "hdfc-parivartan",
+    "name": "HDFC Bank Parivartan's ECSS Programme",
+    "amount": "Up to ₹75,000 / year",
+    "deadline": "20 Nov 2026",
+    "officialLink": "https://www.buddy4study.com/page/hdfc-bank-parivartans-ecss-programme",
+    "eligibility": {
+      "minPercentage": 55,
+      "course": ["B.Tech", "BE", "Diploma", "B.Sc", "B.Com", "B.A", "MBBS", "BCA", "BBA", "PUC"],
+      "maxFamilyIncome": 250000,
+      "category": ["General", "OBC", "SC", "ST", "EWS"],
+      "gender": "All",
+      "state": ["All India"]
+    },
+    "provider": "HDFC Bank CSR",
+    "description": "Educational crisis assistance for students from economically weaker sections facing financial hardship to prevent dropping out.",
+    "documents": [
+      "Previous year academic marks card (min 55%)",
+      "Proof of family income (< 2.5 LPA) or document proving family crisis",
+      "Admission proof (College ID / Fee receipt)",
+      "Bank passbook details with IFSC code"
+    ],
+    "applicationSteps": [
+      "Register on Buddy4Study portal.",
+      "Complete 'HDFC Bank Parivartan ECSS' form.",
+      "Upload proof of economic hardship and tuition bill.",
+      "Direct benefit transfer (DBT) disbursed into bank account."
+    ]
+  },
+  {
+    "id": "sitaram-jindal",
+    "name": "Sitaram Jindal Foundation Scholarship",
+    "amount": "₹15,000 – ₹38,400 / year",
+    "deadline": "31 Dec 2026",
+    "officialLink": "https://www.sitaramjindalfoundation.org/",
+    "eligibility": {
+      "minPercentage": 60,
+      "course": ["B.Tech", "BE", "Diploma", "B.Sc", "B.Com", "B.A", "MBBS", "PUC"],
+      "maxFamilyIncome": 400000,
+      "category": ["General", "OBC", "SC", "ST", "EWS"],
+      "gender": "All",
+      "state": ["All India", "Karnataka"]
+    },
+    "provider": "Sitaram Jindal Foundation",
+    "description": "Renowned private charitable scholarship supporting deserving students from underprivileged backgrounds across India.",
+    "documents": [
+      "Marks card of previous exam",
+      "Income certificate (< 4 LPA for employed, < 2.5 LPA for others)",
+      "Certificate regarding fees from College Principal",
+      "Hostel stay certificate (if applicable for enhanced stipend)"
+    ],
+    "applicationSteps": [
+      "Download official application form from SJF website.",
+      "Fill and get attested by the Principal/Head of the Institute.",
+      "Send hard copy along with required attachments to Jindal Foundation Bangalore office.",
+      "Stipend is dispatched via cheque/NEFT quarterly."
+    ]
+  },
+  {
+    "id": "pm-yasasvi",
+    "name": "PM Young Achievers Scholarship Scheme (YASASVI)",
+    "amount": "₹75,000 – ₹1,25,000 / year",
+    "deadline": "25 Nov 2026",
+    "officialLink": "https://scholarships.gov.in/",
+    "eligibility": {
+      "minPercentage": 60,
+      "course": ["PUC", "Diploma", "B.Tech", "BE", "B.Sc", "B.Com", "B.A"],
+      "maxFamilyIncome": 250000,
+      "category": ["OBC", "EBC", "DNT"],
+      "gender": "All",
+      "state": ["All India"]
+    },
+    "provider": "Ministry of Social Justice and Empowerment (Govt of India)",
+    "description": "Prestigious central scholarship for OBC, EBC, and Nomadic Tribe students studying in top identified schools and colleges across India.",
+    "documents": [
+      "OBC / EBC / DNT Category Certificate",
+      "Parent Income Certificate (< 2.5 Lakhs)",
+      "Marks Card of Class 8th / 10th / 12th",
+      "Aadhaar Number linked with bank account"
+    ],
+    "applicationSteps": [
+      "Register on NSP portal with OTR credential.",
+      "Apply under MSJE PM-YASASVI Top Class Education scheme.",
+      "Institute verification completed online by College Nodal Officer.",
+      "Scholarship credited via PFMS directly to Aadhaar seeded bank."
+    ]
+  },
+  {
+    "id": "dr-ambedkar-postmatric",
+    "name": "Dr. Ambedkar Post-Matric Scholarship for EBC Students",
+    "amount": "₹20,000 – ₹45,000 / year",
+    "deadline": "15 Jan 2027",
+    "officialLink": "https://scholarships.gov.in/",
+    "eligibility": {
+      "minPercentage": 50,
+      "course": ["B.Tech", "BE", "Diploma", "B.Sc", "B.Com", "B.A", "MBBS", "BCA", "PUC"],
+      "maxFamilyIncome": 250000,
+      "category": ["EWS", "General", "OBC"],
+      "gender": "All",
+      "state": ["All India"]
+    },
+    "provider": "Ministry of Social Justice and Empowerment",
+    "description": "Centrally sponsored scheme providing financial assistance to Economically Backward Class (EBC) students studying at post-matriculation level.",
+    "documents": [
+      "EBC Income Certificate from authorized revenue authority",
+      "Previous year passing mark sheet",
+      "College Admission and Fee Structure receipt",
+      "Aadhaar and Bank details"
+    ],
+    "applicationSteps": [
+      "Log into National Scholarship Portal.",
+      "Select 'Dr. Ambedkar Post-Matric Scholarship for EBC'.",
+      "Upload income certificate and mark sheets.",
+      "Submit for college and district welfare officer approval."
+    ]
+  },
+  {
+    "id": "lic-golden-jubilee",
+    "name": "LIC Golden Jubilee Scholarship Scheme",
+    "amount": "₹20,000 – ₹40,000 / year",
+    "deadline": "18 Dec 2026",
+    "officialLink": "https://licindia.in/",
+    "eligibility": {
+      "minPercentage": 60,
+      "course": ["B.Tech", "BE", "MBBS", "B.Sc", "B.Com", "B.A", "Diploma", "ITI"],
+      "maxFamilyIncome": 250000,
+      "category": ["General", "OBC", "SC", "ST", "EWS"],
+      "gender": "All",
+      "state": ["All India"]
+    },
+    "provider": "Life Insurance Corporation of India (LIC) Golden Jubilee Foundation",
+    "description": "Supports economically weaker students pursuing higher studies in medicine, engineering, graduation in any discipline, or diploma/vocational courses.",
+    "documents": [
+      "Class 10th / 12th marks sheet with at least 60% marks",
+      "Income Certificate (< 2.5 LPA)",
+      "Proof of admission in recognized college",
+      "Bank Account details"
+    ],
+    "applicationSteps": [
+      "Apply online on LIC official portal under Golden Jubilee Foundation.",
+      "Select nearest LIC Divisional Office.",
+      "Submit academic score and family income breakdown.",
+      "Shortlisted candidates called for verification at divisional office."
+    ]
+  },
+  {
+    "id": "tata-trusts-ug",
+    "name": "Tata Trusts Medical and Healthcare Scholarship",
+    "amount": "₹30,000 – ₹70,000 / year",
+    "deadline": "10 Nov 2026",
+    "officialLink": "https://www.tatatrusts.org/",
+    "eligibility": {
+      "minPercentage": 65,
+      "course": ["MBBS", "BDS", "B.Sc Nursing", "B.Pharm", "B.Sc"],
+      "maxFamilyIncome": 600000,
+      "category": ["General", "OBC", "SC", "ST", "EWS"],
+      "gender": "All",
+      "state": ["All India"]
+    },
+    "provider": "Tata Trusts Education Grants",
+    "description": "Merit and need-based tuition fee waiver for undergraduate students enrolled in healthcare, medicine, and nursing across recognized institutions.",
+    "documents": [
+      "NEET Rank Letter & College Admission Letter",
+      "Class 12th Marksheet (min 65%)",
+      "Income proof / Salary slip of earning family members",
+      "Fee structure signed by college authorities"
+    ],
+    "applicationSteps": [
+      "Access Tata Trusts Individual Grants portal.",
+      "Register student profile and choose Medical & Healthcare Grant.",
+      "Upload college tuition fee receipts and marks sheet.",
+      "Trusts team evaluates and disburses grant directly to institution."
+    ]
+  },
+  {
+    "id": "loreal-women-science",
+    "name": "L'Oréal India For Young Women In Science Scholarship",
+    "amount": "₹2,50,000 over course duration",
+    "deadline": "28 Oct 2026",
+    "officialLink": "https://www.buddy4study.com/page/loreal-india-for-young-women-in-science-scholarships",
+    "eligibility": {
+      "minPercentage": 85,
+      "course": ["B.Tech", "BE", "MBBS", "B.Sc", "B.Pharm", "B.Arch"],
+      "maxFamilyIncome": 600000,
+      "category": ["General", "OBC", "SC", "ST", "EWS"],
+      "gender": "Female",
+      "state": ["All India"]
+    },
+    "provider": "L'Oréal India CSR",
+    "description": "Empowers promising young women from families with annual income under 6 Lakhs who achieved 85%+ in Class 12 (PCB/PCM) to pursue STEM degrees.",
+    "documents": [
+      "Class 10th and 12th Mark sheets (min 85% in PCB/PCM)",
+      "Proof of admission in recognized college for science/engineering/medicine",
+      "Family Income Certificate / Salary Slips / ITR",
+      "Aadhaar card copy"
+    ],
+    "applicationSteps": [
+      "Apply through Buddy4Study / L'Oreal portal.",
+      "Submit academic essay and college entrance score.",
+      "Shortlisted candidates participate in video/telephonic interview with scientific jury.",
+      "Awardees receive financial grant disbursed annually."
+    ]
+  },
+  {
+    "id": "aicte-saksham",
+    "name": "AICTE Saksham Scholarship for Specially-Abled Students",
+    "amount": "₹50,000 / year",
+    "deadline": "15 Dec 2026",
+    "officialLink": "https://scholarships.gov.in/",
+    "eligibility": {
+      "minPercentage": 50,
+      "course": ["B.Tech", "BE", "Diploma", "B.Arch", "B.Pharm"],
+      "maxFamilyIncome": 800000,
+      "category": ["General", "OBC", "SC", "ST", "EWS"],
+      "gender": "All",
+      "state": ["All India"]
+    },
+    "provider": "AICTE / Ministry of Education",
+    "description": "Financial grant of ₹50,000 per annum for specially-abled students with >= 40% disability enrolled in AICTE approved technical degree/diploma courses.",
+    "documents": [
+      "Unique Disability ID (UDID) / Disability Certificate (> 40%)",
+      "Class 10th & 12th Marks Card",
+      "Annual Family Income Certificate (< 8 LPA)",
+      "Tuition Fee receipt and college admission allotment letter"
+    ],
+    "applicationSteps": [
+      "Register on National Scholarship Portal (NSP).",
+      "Select 'AICTE Saksham Scheme for Specially-Abled'.",
+      "Upload disability certificate and bank details.",
+      "Institutional verification completed by College Nodal Officer."
+    ]
+  },
+  {
+    "id": "ongc-scholarship",
+    "name": "ONGC Foundation Merit Scholarship",
+    "amount": "₹48,000 / year",
+    "deadline": "05 Dec 2026",
+    "officialLink": "https://ongcscholar.org/",
+    "eligibility": {
+      "minPercentage": 60,
+      "course": ["B.Tech", "BE", "MBBS", "MBA", "M.Tech"],
+      "maxFamilyIncome": 450000,
+      "category": ["SC", "ST", "OBC", "EWS"],
+      "gender": "All",
+      "state": ["All India"]
+    },
+    "provider": "Oil and Natural Gas Corporation (ONGC Foundation)",
+    "description": "Merit-based financial aid for economically disadvantaged SC, ST, OBC, and EWS students enrolled in 1st year Engineering or MBBS programs.",
+    "documents": [
+      "Caste / Category Certificate",
+      "Income Certificate (< 4.5 LPA)",
+      "Class 12th Marksheet (min 60%)",
+      "College Admission Letter and College ID card",
+      "Bank ECS mandate form with cancelled cheque"
+    ],
+    "applicationSteps": [
+      "Visit the ONGC Scholar portal.",
+      "Register and fill out the online application form.",
+      "Upload certified copies of certificates and college fee receipt.",
+      "Shortlisted candidates receive direct benefit transfer into their bank account."
+    ]
+  },
+  {
+    "id": "santos-foundation-ug",
+    "name": "Santos Foundation Higher Education Grant",
+    "amount": "₹35,000 / year",
+    "deadline": "22 Nov 2026",
+    "officialLink": "https://www.buddy4study.com/",
+    "eligibility": {
+      "minPercentage": 55,
+      "course": ["B.Tech", "BE", "B.Sc", "B.Com", "B.A", "Diploma", "BCA"],
+      "maxFamilyIncome": 300000,
+      "category": ["General", "OBC", "SC", "ST", "EWS"],
+      "gender": "All",
+      "state": ["All India"]
+    },
+    "provider": "Santos Foundation CSR",
+    "description": "Provides financial support to underprivileged students pursuing undergraduate degree and diploma courses across government colleges.",
+    "documents": [
+      "Previous semester or 12th marksheet (min 55%)",
+      "Family Income Certificate (< 3 LPA)",
+      "College bonafide certificate",
+      "Bank passbook details"
+    ],
+    "applicationSteps": [
+      "Submit application on portal with academic details.",
+      "Upload documents and income proofs.",
+      "Undergo telephone interview if shortlisted."
+    ]
+  },
+  {
+    "id": "vidyasaarathi-acc",
+    "name": "ACC Vidyasaarathi Scholarship Scheme",
+    "amount": "₹30,000 – ₹50,000 / year",
+    "deadline": "12 Nov 2026",
+    "officialLink": "https://www.vidyasaarathi.co.in/",
+    "eligibility": {
+      "minPercentage": 50,
+      "course": ["B.Tech", "BE", "Diploma", "B.Sc", "B.Com", "B.A", "ITI"],
+      "maxFamilyIncome": 500000,
+      "category": ["General", "OBC", "SC", "ST", "EWS"],
+      "gender": "All",
+      "state": ["All India", "Karnataka", "Maharashtra", "Tamil Nadu"]
+    },
+    "provider": "ACC Cements (Protean Vidyasaarathi)",
+    "description": "Scholarship opportunity for students pursuing higher professional education residing near industrial operational locations or accredited colleges.",
+    "documents": [
+      "Class 10th / 12th / Diploma Marksheet",
+      "Proof of family income (< 5 LPA)",
+      "College Admission Letter and fee structure",
+      "Identity Proof (Aadhaar Card)"
+    ],
+    "applicationSteps": [
+      "Sign in to Protean Vidyasaarathi portal.",
+      "Search for ACC scholarship scheme matching your stream.",
+      "Upload documents and submit.",
+      "Direct disbursement into verified student bank account."
+    ]
+  },
+  {
+    "id": "sant-nirankari",
+    "name": "Sant Nirankari Higher Education Assistance",
+    "amount": "Up to ₹50,000 / year",
+    "deadline": "30 Nov 2026",
+    "officialLink": "https://www.nirankari.org/",
+    "eligibility": {
+      "minPercentage": 60,
+      "course": ["B.Tech", "BE", "MBBS", "B.Arch", "B.Pharm", "Law"],
+      "maxFamilyIncome": 350000,
+      "category": ["General", "OBC", "SC", "ST", "EWS"],
+      "gender": "All",
+      "state": ["All India"]
+    },
+    "provider": "Sant Nirankari Mandal (Education Department)",
+    "description": "Financial assistance on merit-cum-means basis to deserving students admitted into recognized technical and professional institutions in India.",
+    "documents": [
+      "Marksheet of 12th or preceding semester examination",
+      "Income Certificate / Salary certificate (< 3.5 LPA)",
+      "Fee payment receipt of current academic semester",
+      "Recommendation from college Head/Dean"
+    ],
+    "applicationSteps": [
+      "Download Education Assistance form from Nirankari Mandal portal.",
+      "Attach verified copies of marksheets and parent income certificate.",
+      "Submit before deadline to the Education Department at Delhi head office."
+    ]
+  },
+  {
+    "id": "aditya-birla-covid",
+    "name": "Aditya Birla Capital Foundation Crisis Grant",
+    "amount": "₹60,000 / year",
+    "deadline": "08 Dec 2026",
+    "officialLink": "https://www.buddy4study.com/",
+    "eligibility": {
+      "minPercentage": 50,
+      "course": ["B.Tech", "BE", "B.Sc", "B.Com", "B.A", "MBBS", "Diploma", "BCA"],
+      "maxFamilyIncome": 600000,
+      "category": ["General", "OBC", "SC", "ST", "EWS"],
+      "gender": "All",
+      "state": ["All India"]
+    },
+    "provider": "Aditya Birla Capital Foundation",
+    "description": "Special crisis scholarship ensuring continuity of education for students who have suffered a family breadwinner loss or severe economic setback.",
+    "documents": [
+      "Mark sheet of previous academic year",
+      "Proof of crisis (Breadwinner demise certificate / Medical crisis proof)",
+      "Current year admission and fee receipt",
+      "Aadhaar and bank details"
+    ],
+    "applicationSteps": [
+      "Complete application on Buddy4Study under Aditya Birla Capital Foundation.",
+      "Upload proof of crisis and college bonafide.",
+      "Telephonic and document verification.",
+      "Direct college fee disbursement or account transfer."
+    ]
+  }
+]

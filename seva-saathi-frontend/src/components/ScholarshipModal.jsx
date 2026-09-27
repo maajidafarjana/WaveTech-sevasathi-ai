@@ -26,7 +26,7 @@ export default function ScholarshipModal({ scholarship, onClose, onAskAI }) {
       }).catch(() => {});
     } else {
       navigator.clipboard?.writeText(
-        `${scholarship.name} - Grant: ${scholarship.amount}. Check details at ${scholarship.officialUrl}`
+        `${scholarship.name} - Grant: ${scholarship.amount}. Check details at ${scholarship.officialLink || scholarship.officialUrl || scholarship.url}`
       );
       alert("Scholarship link copied to clipboard!");
     }
@@ -205,7 +205,7 @@ export default function ScholarshipModal({ scholarship, onClose, onAskAI }) {
           </button>
 
           <a 
-            href={scholarship.officialUrl || scholarship.url}
+            href={scholarship.officialLink || scholarship.officialUrl || scholarship.url}
             target="_blank"
             rel="noopener noreferrer"
             className="primaryModalBtn"
