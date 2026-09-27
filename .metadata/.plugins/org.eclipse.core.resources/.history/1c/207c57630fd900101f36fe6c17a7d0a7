@@ -1,0 +1,24 @@
+package com.pack;
+
+class TrafficFine {
+    String vehicleNumber;
+    String violation;
+    int fineAmount;
+
+    TrafficFine(String vno, String vio, int fine) {
+        vehicleNumber = vno;
+        violation = vio;
+        fineAmount = fine;
+    }
+
+    void display() {
+        System.out.println("Vehicle Number: " + vehicleNumber);
+        System.out.println("Violation: " + violation);
+        System.out.println("Fine Amount: Rs. " + fineAmount);
+    }
+
+    public static void main(String[] args) {
+        TrafficFine t1 = new TrafficFine("KA-25-AB-1234", "Signal Jumping", 1000);
+        t1.display();
+    }
+}

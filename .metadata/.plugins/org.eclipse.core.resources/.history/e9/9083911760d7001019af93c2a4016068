@@ -1,0 +1,7 @@
+package mypack.com;
+
+public class mypackagedemo {
+public void display() {
+	System.out.println("this is closed inside 'my pack'package");
+}
+}

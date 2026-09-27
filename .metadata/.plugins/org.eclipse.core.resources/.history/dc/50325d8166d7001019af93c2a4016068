@@ -1,0 +1,13 @@
+package com.pack;
+class MyThreadDemo implement runnable{
+	@Override
+	public void run() {
+		try {
+			for(int i=1;i<=5;i++) {
+				System.out.println("thread"+Thread.currentThread().get()+"is running..count"+i);
+			}
+		}catch(interrpution exception e) {
+			System.out.println("thread is interreupted");
+		}
+	}
+}

@@ -1,0 +1,8 @@
+package com.pack;
+import mypack.mypackageDemo;
+public class mypackDemo {
+public static void main(String[] args) {
+MyPackageDemo obj = new mypackageDemo();
+obj.display();
+}
+}
